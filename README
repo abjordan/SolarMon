@@ -1,0 +1,14 @@
+To set up the environment the first time:
+$ virtualenv venv
+$ . venv/bin/activate
+$ pip install Flask
+$ pip install MySQL-python
+$ pip install beautifulsoup4
+
+To turn on the server:
+
+$ . venv/bin/activate
+$ python SolarMon.py
+
+
+
