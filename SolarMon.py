@@ -6,6 +6,7 @@ import time
 
 app = Flask(__name__)
 db = None
+sql_time_fmt = "%Y-%m-%d %H:%M:%S"
 
 @app.route('/')
 def hello_flask():
@@ -17,12 +18,31 @@ def page_not_found(error):
     return s, 404
 
 
+@app.route('/production/<int:year>/<int:month>/<int:day>')
+def production(year, month, day):
+    if db is None:
+        abort(404)
+        
+    date = "%04d-%02d-%02d" % (year, month, day)
+    db.ping(True)
+    cur = db.cursor()
+    cur.execute("SELECT * FROM production WHERE time <= '%s 23:59:59' AND time >= '%s 00:00:00' ORDER BY time;" % (date, date))
+    productionData = []
+    rows = cur.fetchall()
+    for row in rows:
+        timestamp = str(row[0]).split(" ")[1]
+        prod = row[1]
+        productionData.append([timestamp, prod])    
+    cur.close()
+    db.commit()
+    return render_template("production.html", 
+                           productionData=productionData,
+                           date=date)
+
 @app.route('/production/today')
 def today_prod():
     if db is None:
         abort(404)
-
-    sql_time_fmt = "%Y-%m-%d %H:%M:%S"
 
     today = time.strftime(sql_time_fmt)
     date = today.split(" ")[0]
