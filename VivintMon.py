@@ -44,6 +44,7 @@ def looper():
         print "Got a reading at " + now + " = %f" % results[0]
 
         ins = "INSERT INTO production VALUES ('%s', %f);" % (now, results[0])
+        db.ping(True)
         cur = db.cursor()
         cur.execute(ins)
         cur.close()

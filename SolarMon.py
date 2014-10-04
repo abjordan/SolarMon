@@ -27,6 +27,7 @@ def today_prod():
     today = time.strftime(sql_time_fmt)
     date = today.split(" ")[0]
 
+    db.ping(True)
     cur = db.cursor()
     cur.execute("SELECT * FROM production WHERE time <= '%s 23:59:59' AND time >= '%s 00:00:00' ORDER BY time;" % (date, date))
     productionData = []
