@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template
 import MySQLdb
-import time
+import time, datetime
 
 app = Flask(__name__)
 db = None
@@ -26,6 +26,7 @@ def production(year, month, day):
     date = "%04d-%02d-%02d" % (year, month, day)
     db.ping(True)
     cur = db.cursor()
+    print "SELECT * FROM production WHERE time <= '%s 23:59:59' AND time >= '%s 00:00:00' ORDER BY time;" % (date, date)
     cur.execute("SELECT * FROM production WHERE time <= '%s 23:59:59' AND time >= '%s 00:00:00' ORDER BY time;" % (date, date))
     productionData = []
     rows = cur.fetchall()
@@ -38,6 +39,15 @@ def production(year, month, day):
     return render_template("production.html", 
                            productionData=productionData,
                            date=date)
+
+@app.route('/production/week/<int:year>/<int:month>/<int:day>')
+def production_week(year, month, day):
+    if db is None:
+        abort(404)
+
+    start = datetime.date(year, month, day)
+    stop = start + datetime.timedelta(days=7)
+    
 
 @app.route('/production/today')
 def today_prod():

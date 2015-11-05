@@ -50,7 +50,7 @@ def looper():
         cur.close()
         db.commit()
 
-        sleep_time = 600 - (time.time() - start_time)
+        sleep_time = 360 - (time.time() - start_time)
         print "Sleeping for %f seconds" % sleep_time
         time.sleep( sleep_time )
         start_time = time.time()
