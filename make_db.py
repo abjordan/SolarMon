@@ -19,13 +19,15 @@ current_production_w INTEGER
 
 cur.execute(prod)
 
-# Insert some fake data
-ins = "INSERT INTO production VALUES ('2014-09-29 %02d:00:00', %d);"
-for i in range(0, 24):
-    s = ins % (i, i)
-    cur.execute(s)
+inverters = '''
+CREATE TABLE IF NOT EXISTS inverters 
+(
+	serial varchar(12), 
+	status varchar(255), 
+	last_update varchar(32)
+);'''
+
+cur.execute(inverters)
 
 db.commit()
 db.close()
-
-

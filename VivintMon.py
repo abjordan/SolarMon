@@ -63,8 +63,6 @@ def grab_microinverter_stats():
         full_page = full_site.read()
         data = json.loads(full_page)
 
-    print data
-
     # Data is: [part_number, install_date, serial_num, status, running_image, assembly_part_number, controller_part_no, last_report]
     # We care about serial_num, status, and last_report - the others are less interesting. It's not clear how often they update...
     # Seems to be about every five minutes?
@@ -93,10 +91,11 @@ def looper():
         cur.close()
 
         inv_stats = grab_microinverter_stats()
-        ins = "INSERT INTO inverters VALUES ('{0}', '{1}', '{2}');".format(*inv_stats)
-        db.ping(True)
         cur = db.cursor()
-        cur.execute(ins)
+        db.ping(True)
+        for inv in inv_stats:
+            ins = "INSERT INTO inverters VALUES ('{0}', '{1}', '{2}');".format(*inv)
+            cur.execute(ins)
         cur.close()
 
         db.commit()
